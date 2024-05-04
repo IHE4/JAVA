@@ -1,0 +1,12 @@
+titre;realisateur;date_publication;theme;producteur;resume;categorie_age;acteurs_principaux;activer_commentaire;code;actif
+the godfather;francis ford coppola;1972;crime;paramount pictures;la saga d'une famille mafieuse italo-americaine dirigee par le patriarche don vito corleone.;r;marlon brando, al pacino;non;gdf;oui
+inception;christopher nolan;2010;action;warner bros;un voleur experimente vole des secrets en utilisant une technologie d'infiltration dans les reves.;13;leonardo dicaprio, joseph gordon-levitt;oui;inc;oui
+the notebook;nick cassavetes;2004;romance;new line cinema;une histoire d'amour passionnee entre un jeune couple confronte a des defis et a des saparations.;13;ryan gosling, rachel mcadams;non;not;oui
+la la land;damien chazelle;2016;musical;lionsgate;un pianiste de jazz et une aspirante actrice tombent amoureux a los angeles tout en poursuivant leurs reves.;13;ryan gosling, emma stone;oui;lll;oui
+deadpool;tim miller;2016;super-heros;20th century fox;un ancien agent des forces speciales subit une experience qui le laisse avec des pouvoirs de guerison, adoptant l'alter ego de deadpool.;16;ryan reynolds, morena baccarin;non;ddp;oui
+the hangover;todd phillips;2009;comedie;warner bros;apres une nuit de debauche a las vegas, trois amis se reveillent sans souvenir de ce qui s'est passe et tentent de retrouver le marie disparu.;18;bradley cooper, ed helms, zach galifianakis;oui;hng;oui
+the avengers;joss whedon;2012;super-heros;marvel studios;une equipe de super-heros, dont iron man, thor, hulk et captain america, s'unit pour sauver le monde des menaces extraterrestres.;13;robert downey jr., chris evans, scarlett johansson;non;avn;oui
+titanic;james cameron;1997;drame;20th century fox;l'histoire epique de l'amour entre jack et rose, deux passagers du titanic, alors que le navire coule tragiquement.;13;leonardo dicaprio, kate winslet;oui;ttn;oui
+interstellar;christopher nolan;2014;science-fiction;paramount pictures;un groupe d'explorateurs voyage a travers un trou de ver dans l'espace afin de trouver une nouvelle planete habitable pour l'humanite.;13;matthew mcconaughey, anne hathaway;oui;int;oui
+the shawshank redemption;frank darabont;1994;drame;columbia pictures;l'histoire d'andy dufresne, un banquier condamne a tort pour le meurtre de sa femme, et de son amitie avec un detenu nomme red.;r;tim robbins, morgan freeman;oui;tsr;oui
+
