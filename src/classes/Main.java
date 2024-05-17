@@ -2,185 +2,210 @@ package classes;
 
 import java.sql.Date;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Scanner;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
 public class Main {
-    public static void main(String[] args) throws SQLException {
-        User user = null;
-        Scanner mainScanner = new Scanner(System.in);
+	private static final Date Date = null;
 
-        while (true) {
-            while (user == null) {
-                System.out.println("Main Menu:");
-                System.out.println("1. Login");
-                System.out.println("2. Register");
-                System.out.println("3. View Movies");
-                System.out.println("4. Quit");
-                System.out.println("Enter your choice:");
-                int choice = mainScanner.nextInt();
+	public static void main(String[] args) throws SQLException {
+		User user = null;
+		Scanner mainScanner = new Scanner(System.in);
 
-                switch (choice) {
-                    case 1:
-                        // login function
-                    	Scanner loginScanner = new Scanner(System.in);
-                        System.out.println("Enter your email:");
-                        String email = loginScanner.nextLine();
-                        System.out.println("Enter your password:");
-                        String password = loginScanner.nextLine();
-                        try {
-                            user = User.login(email, password);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+		while (true) {
+			while (user == null) {
+				System.out.println("Main Menu:");
+				System.out.println("1. Login");
+				System.out.println("2. Register");
+				System.out.println("3. View Movies");
+				System.out.println("4. Quit");
+				System.out.println("Enter your choice:");
+				int choice = mainScanner.nextInt();
 
-                        if (user != null) {
-                            System.out.println("Login successful!");
-                            System.out.println("Welcome, " + user.getFirstName() + "!");
-                        } else {
-                            System.out.println("Login failed..");
-                        }
-                        break;
+				switch (choice) {
+				case 1:
+					// login function
+					Scanner loginScanner = new Scanner(System.in);
+					System.out.println("Enter your email:");
+					String email = loginScanner.nextLine();
+					System.out.println("Enter your password:");
+					String password = loginScanner.nextLine();
+					try {
+						user = User.login(email, password);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 
-                    case 2:
-                        // register function
-                        Scanner registerScanner = new Scanner(System.in);
-                        System.out.print("Enter email: ");
-                        String email1 = registerScanner.nextLine();
-                        System.out.print("Enter password: ");
-                        String password1 = registerScanner.nextLine();
-                        System.out.print("Enter first name: ");
-                        String firstName = registerScanner.nextLine();
-                        System.out.print("Enter last name: ");
-                        String lastName = registerScanner.nextLine();
-                        System.out.print("Enter date of birth (YYYY-MM-DD): ");
-                        String dateOfBirthStr = registerScanner.nextLine();
-                        LocalDate dateOfBirth1 = LocalDate.parse(dateOfBirthStr);
-                        Date dateOfBirth11 = Date.valueOf(dateOfBirth1);
+					if (user != null) {
+						System.out.println("Login successful!");
+						System.out.println("Welcome, " + user.getFirstName() + "!");
+					} else {
+						System.out.println("Login failed..");
+					}
+					break;
 
-                        System.out.print("Enter address: ");
-                        String address = registerScanner.nextLine();
-                        System.out.print("Enter secret phrase: ");
-                        String secretPhrase = registerScanner.nextLine();
+				case 2:
+					// register function
+					Scanner registerScanner = new Scanner(System.in);
+					System.out.print("Enter email: ");
+					String email1 = registerScanner.nextLine();
+					System.out.print("Enter password: ");
+					String password1 = registerScanner.nextLine();
+					System.out.print("Enter first name: ");
+					String firstName = registerScanner.nextLine();
+					System.out.print("Enter last name: ");
+					String lastName = registerScanner.nextLine();
+					System.out.print("Enter date of birth (YYYY-MM-DD): ");
+					String dateOfBirthStr = registerScanner.nextLine();
+					LocalDate dateOfBirth1 = LocalDate.parse(dateOfBirthStr);
+					Date dateOfBirth11 = Date.valueOf(dateOfBirth1);
 
-                        boolean isAdmin = false;
+					System.out.print("Enter address: ");
+					String address = registerScanner.nextLine();
+					System.out.print("Enter secret phrase: ");
+					String secretPhrase = registerScanner.nextLine();
 
-                        System.out.print("Enter initial money: ");
-                        float money = registerScanner.nextFloat();
-                        registerScanner.nextLine(); // consume newline character
+					boolean isAdmin = false;
 
-                        user = User.register(email1, password1, firstName, lastName, dateOfBirth11, address, secretPhrase, isAdmin, money);
-                        if (user == null) {
-                            System.out.println("Registration failed! The email is already registered.");
-                        }
-                        break;
+					System.out.print("Enter initial money: ");
+					float money = registerScanner.nextFloat();
+					registerScanner.nextLine(); // consume newline character
 
-                    case 3:
-                        // list movies
-                        Movie.listMovies();
-                        break;
+					user = User.register(email1, password1, firstName, lastName, dateOfBirth11, address, secretPhrase, isAdmin, money);
+					if (user == null) {
+						System.out.println("Registration failed! The email is already registered.");
+					}
+					break;
 
-                    case 4:
-                        // quit
-                        System.out.println("Goodbye!");
-                        mainScanner.close();
-                        System.exit(0);
-                        break;
+				case 3:
+					// list movies
+					Movie.listMovies();
+					break;
 
-                    default:
-                        System.out.println("Invalid choice. Please try again.");
-                }
-            }
+				case 4:
+					// quit
+					System.out.println("Goodbye!");
+					mainScanner.close();
+					System.exit(0);
+					break;
 
-            while (user != null) {
-                System.out.println("Navigation Menu:");
-                System.out.println("1. View Movies");
-                System.out.println("2. View Shipping Cart");
-                System.out.println("3. Disconnect");
-                System.out.println("4. Quit");
-                if (user.getIsAdmin()) {
-                    System.out.println("5. Admin Panel");
-                }
-                System.out.println("User connected: " + user.getFirstName() + " " + user.getLastName() + " (admin: " + user.getIsAdmin() + ")");
-                System.out.print("Enter your choice: ");
-                int choice = mainScanner.nextInt();
-                mainScanner.nextLine(); // consume newline character
+				default:
+					System.out.println("Invalid choice. Please try again.");
+				}
+			}
 
-                switch (choice) {
-                    case 1:
-                        Movie.listMovies();
+			while (user != null) {
+				System.out.println("Navigation Menu:");
+				System.out.println("1. View Movies");
+				System.out.println("2. View Shipping Cart");
+				System.out.println("3. Disconnect");
+				System.out.println("4. Quit");
+				if (user.getIsAdmin()) {
+					System.out.println("5. Admin Panel");
+				}
+				System.out.println("User connected: " + user.getFirstName() + " " + user.getLastName() + " (admin: " + user.getIsAdmin() + ")");
+				System.out.print("Enter your choice: ");
+				int choice = mainScanner.nextInt();
+				mainScanner.nextLine();
 
-                        System.out.println("Film Menu:");
-                        System.out.println("1. Add to Shipping Cart");
-                        System.out.println("2. Comment a Movie");
-                        System.out.println("3. View Comments");
-                        System.out.println("4. Exit");
+				switch (choice) {
+				case 1:
+					Movie.listMovies();
 
-                        System.out.print("Enter your choice: ");
-                        int choice2 = mainScanner.nextInt();
-                        mainScanner.nextLine(); // consume newline character
+					System.out.println("Film Menu:");
+					System.out.println("1. Add to Shipping Cart");
+					System.out.println("2. Comment a Movie");
+					System.out.println("3. View Comments");
+					System.out.println("4. Exit");
 
-                        switch (choice2) {
-                            case 1:
-                                Scanner addCartScanner = new Scanner(System.in);
-                                System.out.print("Title of movie to add to your shipping cart: ");
-                                String title = addCartScanner.nextLine();
-                                int filmIndex = Movie.getIndexMovieByTitle(title);
-                                ShippingCart.addToShippingCart(user, filmIndex);
-                                break;
+					System.out.print("Enter your choice: ");
+					int choice2 = mainScanner.nextInt();
+					mainScanner.nextLine(); // consume newline character
 
-                            case 2:
-                                Scanner commentScanner = new Scanner(System.in);
-                                System.out.print("Title of movie you want to comment: ");
-                                title = commentScanner.nextLine();
-                                int filmIndex2 = Movie.getIndexMovieByTitle(title);
-                                // implement comment function here
-                                break;
+					switch (choice2) {
+					case 1:
+						Scanner addCartScanner = new Scanner(System.in);
+						System.out.print("Title of movie to add to your shipping cart: ");
+						String title = addCartScanner.nextLine();
+						int filmIndex = Movie.getIndexMovieByTitle(title);
+						ShippingCart.addToShippingCart(user, filmIndex);
+						break;
 
-                            case 3:
-                                Scanner viewCommentsScanner = new Scanner(System.in);
-                                System.out.print("Title of movie you want to see comments: ");
-                                title = viewCommentsScanner.nextLine();
-                                filmIndex = Movie.getIndexMovieByTitle(title);
-                                Movie.commentsByMovieId(filmIndex);
-                                break;
+					case 2:
+						Scanner commentScanner = new Scanner(System.in);
+						System.out.println("Title of movie you want to comment: ");
+						title = commentScanner.nextLine();
+						int filmIndex2 = Movie.getIndexMovieByTitle(title);
+						if (Movie.getEnabledCommentaryById(filmIndex2) == false)
+						{
+							System.out.println("commentaries are not enabled for this movie...\n");
+							break;
+						}
 
-                            case 4:
-                                break;
+						int id_utilisateur = user.getId();
 
-                            case 5:
-                                if (user.getIsAdmin()) {
-                                    // handleAdminPanel();
-                                } else {
-                                    System.out.println("Current user isn't an admin...");
-                                }
-                                break;
+						System.out.println("leave a comment : \n");
+						String commentaire = commentScanner.nextLine();
 
-                            default:
-                                System.out.println("Invalid choice. Please try again.");
-                        }
-                        break;
+						System.out.println("leave a note 0-10 : \n");
+						int note = commentScanner.nextInt();
+						
+						Date date = null;
 
-                    case 2:
-                        // View Shipping Cart function
-                        break;
+						Movie.addCommentary(filmIndex2, id_utilisateur, commentaire, date, note);
 
-                    case 3:
-                        user = null;
-                        break;
+						break;
 
-                    case 4:
-                        System.out.println("Goodbye!");
-                        mainScanner.close();
-                        System.exit(0);
-                        break;
+					case 3:
+						Scanner viewCommentsScanner = new Scanner(System.in);
+						System.out.print("Title of movie you want to see comments: ");
+						title = viewCommentsScanner.nextLine();
+						filmIndex = Movie.getIndexMovieByTitle(title);
+						Movie.commentsByMovieId(filmIndex);
+						break;
 
-                    default:
-                        System.out.println("Invalid choice. Please try again.");
-                }
-            }
-        }
-    }
+					case 4:
+						break;
+
+					case 5:
+						if (user.getIsAdmin()) {
+							// handleAdminPanel();
+						} else {
+							System.out.println("Current user isn't an admin...");
+						}
+						break;
+
+					default:
+						System.out.println("Invalid choice. Please try again.");
+					}
+					break;
+
+				case 2:
+					// View Shipping Cart function
+					break;
+
+				case 3:
+					user = null;
+					break;
+
+				case 4:
+					System.out.println("Goodbye!");
+					mainScanner.close();
+					System.exit(0);
+					break;
+
+				default:
+					System.out.println("Invalid choice. Please try again.");
+				}
+			}
+		}
+	}
 }
 
 

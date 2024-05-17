@@ -9,16 +9,39 @@ import java.sql.SQLException;
 public  class Movie {
 
 	public static int getIndexMovieByTitle(String title) {
-		int movie_index = 0;
+		int id = -1;
 		try (Connection conn = DatabaseConnection.getConnection();
-				PreparedStatement statement = conn.prepareStatement("SELECT id_film FROM films WHERE title = ?")) {
-			statement.setString(1, title);
-			ResultSet resultSet = statement.executeQuery();
-			movie_index = resultSet.getInt("id_film");
+				PreparedStatement pstmt = conn.prepareStatement("SELECT id FROM films WHERE title = ?")) {
+
+			pstmt.setString(1, title);
+
+			ResultSet rs = pstmt.executeQuery();
+			
+			while (rs.next()) {
+				id = rs.getInt("id");
+			}
+			
+
 		} catch (SQLException e) {
-			System.out.println("Error getting movie by title: " + e.getMessage());
+			e.printStackTrace();
 		}
-		return movie_index;
+		return id;
+	}
+	
+	public static boolean getEnabledCommentaryById(int id) {
+		boolean isEnabled = false;
+		try (Connection conn = DatabaseConnection.getConnection();
+				PreparedStatement statement = conn.prepareStatement("SELECT enable_commentaries FROM films WHERE id = ?")) {
+			statement.setInt(1, id);
+			ResultSet resultSet = statement.executeQuery();
+			while (resultSet.next()) {
+				isEnabled = resultSet.getBoolean("enable_commentaries");
+			}
+			
+		} catch (SQLException e) {
+			System.out.println("Error getting enable_commentary by id: " + e.getMessage());
+		}
+		return isEnabled;
 	}
 	
     public static void commentsByMovieId(int movieId) throws SQLException {
@@ -67,7 +90,7 @@ public  class Movie {
                 System.out.println("Producer: " + producteur);
                 System.out.println("Summary: " + resume);
                 System.out.println("Age Category: " + categorie_age);
-                System.out.println("Main Actors: " + acteurs_principaux.split(","));
+                System.out.println("Main Actors: " + acteurs_principaux);
                 System.out.println("Comment Enabled: " + activer_commentaire);
                 System.out.println("Code: " + code);
                 System.out.println();
@@ -77,9 +100,9 @@ public  class Movie {
         }
     }
     
-    public void addCommentary(int id_film, int id_utilisateur, String commentaire, Date date, int note) {
+    public static void addCommentary(int id_film, int id_utilisateur, String commentaire, Date date, int note) {
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement("INSERT INTO commentaires (film_id, utilisateur_id, commentaire, date, note) VALUES (?, ?, ?, ?, ?)")) {
+             PreparedStatement stmt = conn.prepareStatement("INSERT INTO commentaires (id_film, id_utilisateur, commentaire, date, note) VALUES (?, ?, ?, ?, ?)")) {
 
             stmt.setInt(1, id_film);
             stmt.setInt(2, id_utilisateur);
