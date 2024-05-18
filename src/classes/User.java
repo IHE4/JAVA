@@ -60,7 +60,7 @@ public class User {
 	                }
 	            }
 	        }
-	        conn.close();
+
 	    } catch (SQLException e) {
 	        e.printStackTrace();
 	    }
@@ -89,13 +89,11 @@ public class User {
                     }
                 }
             }
-            conn.close();
+ 
         } 
         catch (SQLException e) {
             System.err.println("Error registering user: " + e.getMessage());
         }
-		
-		
 		return user; 
     }
 

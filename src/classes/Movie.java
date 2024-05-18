@@ -6,7 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public  class Movie {
+public class Movie {
 
 	public static int getIndexMovieByTitle(String title) {
 		int id = -1;
@@ -20,7 +20,7 @@ public  class Movie {
 			while (rs.next()) {
 				id = rs.getInt("id");
 			}
-			
+			DatabaseConnection.closeConnection(conn);
 
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -28,42 +28,21 @@ public  class Movie {
 		return id;
 	}
 	
-	public static boolean getEnabledCommentaryById(int id) {
-		boolean isEnabled = false;
+	public static double getMeanNote(int filmId) {
+		double mean = -1.0;
 		try (Connection conn = DatabaseConnection.getConnection();
-				PreparedStatement statement = conn.prepareStatement("SELECT enable_commentaries FROM films WHERE id = ?")) {
-			statement.setInt(1, id);
-			ResultSet resultSet = statement.executeQuery();
+				PreparedStatement stmt = conn.prepareStatement("SELECT AVG(note) FROM `commentaires` WHERE id_film = ?")) {
+			stmt.setInt(1, filmId);
+			ResultSet resultSet = stmt.executeQuery();
 			while (resultSet.next()) {
-				isEnabled = resultSet.getBoolean("enable_commentaries");
+				mean = resultSet.getDouble("AVG(note)");
+
 			}
-			
 		} catch (SQLException e) {
-			System.out.println("Error getting enable_commentary by id: " + e.getMessage());
+			System.err.println("Error loading mean from database: " + e.getMessage());
 		}
-		return isEnabled;
+		return mean;
 	}
-	
-    public static void commentsByMovieId(int movieId) throws SQLException {
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement("SELECT commentaires.commentaire, commentaires.date, commentaires.note, users.firstName FROM commentaires LEFT JOIN users ON commentaires.id_utilisateur = users.id WHERE id_film=?")) {
-
-            pstmt.setInt(1, movieId);
-            ResultSet rs = pstmt.executeQuery();
-
-            while (rs.next()) {
-            	
-                String firstName = rs.getString("firstName");
-                String commentaire = rs.getString("commentaire");
-                Date date = rs.getDate("date");
-                int note = rs.getInt("note");
-                
-                System.out.println(firstName + " : " + date + " (" + note + "/10)");
-				System.out.println(commentaire);
-				System.out.println();
-            }
-        }
-    }
 
     public static void listMovies() {
         try (Connection conn = DatabaseConnection.getConnection();
@@ -71,8 +50,9 @@ public  class Movie {
 
             ResultSet resultSet = stmt.executeQuery();
             while (resultSet.next()) {
-                //int id  = resultSet.getInt("id");
+                int id  = resultSet.getInt("id");
                 String titre = resultSet.getString("title");
+                double price = resultSet.getDouble("price");
                 String realisateur = resultSet.getString("realisator");
                 Date date_publication = resultSet.getDate("publication_date");
                 String theme = resultSet.getString("theme");
@@ -83,7 +63,9 @@ public  class Movie {
                 boolean activer_commentaire = resultSet.getBoolean("enable_commentaries");
                 String code = resultSet.getString("code");
 
-                System.out.println("Title: " + titre);
+                System.out.print("Title: " + titre);
+                System.out.println(" " + Movie.getMeanNote(id) + "/10");
+                System.out.println("Price: " + price);
                 System.out.println("Director: " + realisateur);
                 System.out.println("Release Year: " + date_publication);
                 System.out.println("Theme: " + theme);
@@ -94,6 +76,7 @@ public  class Movie {
                 System.out.println("Comment Enabled: " + activer_commentaire);
                 System.out.println("Code: " + code);
                 System.out.println();
+                
             }
         } catch (SQLException e) {
             System.err.println("Error loading films from database: " + e.getMessage());
@@ -103,15 +86,12 @@ public  class Movie {
     public static void addCommentary(int id_film, int id_utilisateur, String commentaire, Date date, int note) {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement("INSERT INTO commentaires (id_film, id_utilisateur, commentaire, date, note) VALUES (?, ?, ?, ?, ?)")) {
-
             stmt.setInt(1, id_film);
             stmt.setInt(2, id_utilisateur);
             stmt.setString(3, commentaire);
             stmt.setDate(4, date);
             stmt.setInt(5, note);
-
             stmt.executeUpdate();
-
         } catch (SQLException e) {
             System.out.println("Error adding commentary: " + e.getMessage());
         }

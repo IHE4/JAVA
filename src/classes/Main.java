@@ -2,14 +2,9 @@ package classes;
 
 import java.sql.Date;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
+import java.util.ArrayList;
 import java.util.Scanner;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 
 public class Main {
 	private static final Date Date = null;
@@ -20,6 +15,7 @@ public class Main {
 
 		while (true) {
 			while (user == null) {
+
 				System.out.println("Main Menu:");
 				System.out.println("1. Login");
 				System.out.println("2. Register");
@@ -63,8 +59,9 @@ public class Main {
 					String lastName = registerScanner.nextLine();
 					System.out.print("Enter date of birth (YYYY-MM-DD): ");
 					String dateOfBirthStr = registerScanner.nextLine();
+
 					LocalDate dateOfBirth1 = LocalDate.parse(dateOfBirthStr);
-					Date dateOfBirth11 = Date.valueOf(dateOfBirth1);
+					Date dateOfBirth11 = java.sql.Date.valueOf(dateOfBirth1);
 
 					System.out.print("Enter address: ");
 					String address = registerScanner.nextLine();
@@ -142,7 +139,7 @@ public class Main {
 						System.out.println("Title of movie you want to comment: ");
 						title = commentScanner.nextLine();
 						int filmIndex2 = Movie.getIndexMovieByTitle(title);
-						if (Movie.getEnabledCommentaryById(filmIndex2) == false)
+						if (Comment.getEnabledCommentaryById(filmIndex2) == false)
 						{
 							System.out.println("commentaries are not enabled for this movie...\n");
 							break;
@@ -155,7 +152,7 @@ public class Main {
 
 						System.out.println("leave a note 0-10 : \n");
 						int note = commentScanner.nextInt();
-						
+
 						Date date = null;
 
 						Movie.addCommentary(filmIndex2, id_utilisateur, commentaire, date, note);
@@ -167,7 +164,7 @@ public class Main {
 						System.out.print("Title of movie you want to see comments: ");
 						title = viewCommentsScanner.nextLine();
 						filmIndex = Movie.getIndexMovieByTitle(title);
-						Movie.commentsByMovieId(filmIndex);
+						Comment.ViewCommentsByMovieId(filmIndex);
 						break;
 
 					case 4:
@@ -175,7 +172,7 @@ public class Main {
 
 					case 5:
 						if (user.getIsAdmin()) {
-							// handleAdminPanel();
+							// Admin.handleAdminPanel();
 						} else {
 							System.out.println("Current user isn't an admin...");
 						}
@@ -183,11 +180,48 @@ public class Main {
 
 					default:
 						System.out.println("Invalid choice. Please try again.");
+						break;
 					}
-					break;
+
 
 				case 2:
 					// View Shipping Cart function
+					ShippingCart.viewShippingCart(user);
+					Scanner shippingCartScanner = new Scanner(System.in);
+					System.out.println("Shipping Cart Menu:");
+					System.out.println("1. Pay");
+					System.out.println("2. Remove movie");
+					System.out.println("3. Exit");
+					System.out.println("Enter your choice:");
+					int choice3 = shippingCartScanner.nextInt();
+
+					switch (choice3) {
+					case 1:
+						if (ShippingCart.verifyShippingCart(user) != 0) {
+							System.out.println("A movie is already bought... Verify your shipping cart");
+							break;
+						}
+						ShippingCart.Pay(user);
+						System.out.println("paiement succesful ! , thanks " + user.getFirstName());
+						ArrayList<Integer> ids = ShippingCart.idsFromShippingCart(user);
+						for (int i = 0; i < ids.size(); i++) {
+							ShippingCart.removeFromShippingCart(user, ids.get(i));
+						}
+						break;
+					case 2:
+						System.out.println("Title of movie you want to remove :");
+						Scanner removeMovieScanner = new Scanner(System.in);
+						String title = removeMovieScanner.nextLine();
+						int filmIndex = Movie.getIndexMovieByTitle(title);
+						ShippingCart.removeFromShippingCart(user, filmIndex);
+						System.out.println(title + " removed from your shipping cart.");
+						break;
+					case 3: 
+						break;
+					default:
+						System.out.println("Invalid choice. Please try again.");
+						break;	
+					}
 					break;
 
 				case 3:
