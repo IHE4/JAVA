@@ -18,16 +18,5 @@ public class DatabaseConnection {
         
         return DriverManager.getConnection(url, username, password);
     }
-
-    public static void closeConnection(Connection connection) {
-        if (connection != null) {
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                System.err.println("Failed to close connection: " + e.getMessage());
-                e.printStackTrace();
-            }
-        }
-    }
 }
 

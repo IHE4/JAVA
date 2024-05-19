@@ -23,7 +23,7 @@ public class Movie {
 			while (rs.next()) {
 				id = rs.getInt("id");
 			}
-			DatabaseConnection.closeConnection(conn);
+			conn.close();
 
 		} catch (SQLException e) {
 			e.printStackTrace();
