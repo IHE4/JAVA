@@ -17,6 +17,9 @@ public class Movie {
 
 			ResultSet rs = pstmt.executeQuery();
 			
+			if (!rs.isBeforeFirst()) {
+                System.out.println("No movies found for this title");
+            }
 			while (rs.next()) {
 				id = rs.getInt("id");
 			}
@@ -34,6 +37,11 @@ public class Movie {
 				PreparedStatement stmt = conn.prepareStatement("SELECT AVG(note) FROM `commentaires` WHERE id_film = ?")) {
 			stmt.setInt(1, filmId);
 			ResultSet resultSet = stmt.executeQuery();
+			
+			if (!resultSet.isBeforeFirst()) {
+                System.out.println("No Average Found");   
+            }
+			
 			while (resultSet.next()) {
 				mean = resultSet.getDouble("AVG(note)");
 
@@ -49,6 +57,12 @@ public class Movie {
              PreparedStatement stmt = conn.prepareStatement("SELECT * FROM Films")) {
 
             ResultSet resultSet = stmt.executeQuery();
+            
+            if (!resultSet.isBeforeFirst()) {
+                System.out.println("No movies found");
+                return;
+                
+            }
             while (resultSet.next()) {
                 int id  = resultSet.getInt("id");
                 String titre = resultSet.getString("title");
@@ -83,17 +97,76 @@ public class Movie {
         }
     }
     
-    public static void addCommentary(int id_film, int id_utilisateur, String commentaire, Date date, int note) {
+    public static void addFilm(String title, String realisator, Date publicationDate, String theme, String producer, String resume, int ageCategory, String mainActors, boolean enableCommentaries, String code, double price) throws SQLException {
+        String query = "INSERT INTO films (title, realisator, publication_date, theme, producer, resume, age_category, main_actors, enable_commentaries, code, price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement("INSERT INTO commentaires (id_film, id_utilisateur, commentaire, date, note) VALUES (?, ?, ?, ?, ?)")) {
-            stmt.setInt(1, id_film);
-            stmt.setInt(2, id_utilisateur);
-            stmt.setString(3, commentaire);
-            stmt.setDate(4, date);
-            stmt.setInt(5, note);
-            stmt.executeUpdate();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, title);
+            stmt.setString(2, realisator);
+            stmt.setDate(3, publicationDate);
+            stmt.setString(4, theme);
+            stmt.setString(5, producer);
+            stmt.setString(6, resume);
+            stmt.setInt(7, ageCategory);
+            stmt.setString(8, mainActors);
+            stmt.setBoolean(9, enableCommentaries);
+            stmt.setString(10, code);
+            stmt.setDouble(11, price);
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows > 0) {
+                System.out.println("New film added successfully.");
+            } else {
+                System.out.println("Failed to add new film.");
+            }
+
         } catch (SQLException e) {
-            System.out.println("Error adding commentary: " + e.getMessage());
+            System.err.println("Error adding film: " + e.getMessage());
+        }
+    }
+    
+    public static void removeFilm(int id) throws SQLException {
+        String query = "DELETE FROM films WHERE id = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, id);
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows > 0) {
+                System.out.println("Film removed successfully.");
+            } else {
+                System.out.println("Failed to remove film.");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error removing film: " + e.getMessage());
+        }
+    }
+    
+    public static void modifyFilm(int id, String title, String realisator, String publication_date, String theme, String producer, String resume, int age_category, String main_actors, boolean enable_commentaries, String code, double price) throws SQLException {
+        String query = "UPDATE films SET title = ?, realisator = ?, publication_date = ?, theme = ?, producer = ?, resume = ?, age_category = ?, main_actors = ?, enable_commentaries = ?, code = ?, price = ? WHERE id = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, title);
+            stmt.setString(2, realisator);
+            stmt.setDate(3, java.sql.Date.valueOf(publication_date));
+            stmt.setString(4, theme);
+            stmt.setString(5, producer);
+            stmt.setString(6, resume);
+            stmt.setInt(7, age_category);
+            stmt.setString(8, main_actors);
+            stmt.setBoolean(9, enable_commentaries);
+            stmt.setString(10, code);
+            stmt.setDouble(11, price);
+            stmt.setInt(12, id);
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows > 0) {
+                System.out.println("Film modified successfully.");
+            } else {
+                System.out.println("Failed to modify film.");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error modifying film: " + e.getMessage());
         }
     }
     

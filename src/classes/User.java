@@ -96,6 +96,57 @@ public class User {
         }
 		return user; 
     }
+	
+	public static void removeUser(int userId) {
+	    String query = "DELETE FROM Users WHERE id = ?";
+
+	    try (Connection conn = DatabaseConnection.getConnection();
+	         PreparedStatement stmt = conn.prepareStatement(query)) {
+
+	        stmt.setInt(1, userId);
+
+	        int affectedRows = stmt.executeUpdate();
+
+	        if (affectedRows > 0) {
+	            System.out.println("User with ID " + userId + " has been deleted.");
+	        } else {
+	            System.out.println("No user with ID " + userId + " found.");
+	        }
+
+	    } catch (SQLException e) {
+	        System.err.println("Error deleting user: " + e.getMessage());
+	    }
+	}
+	
+	public static void modifyUser(int userId, String email, String password, String firstName, String lastName, Date dateOfBirth, String address, String secretPhrase, boolean isAdmin, float money) {
+	    String query = "UPDATE Users SET email = ?, password = ?, firstName = ?, lastName = ?, dateOfBirth = ?, address = ?, secretPhrase = ?, isAdmin = ?, money = ? WHERE id = ?";
+
+	    try (Connection conn = DatabaseConnection.getConnection();
+	         PreparedStatement stmt = conn.prepareStatement(query)) {
+
+	        stmt.setString(1, email);
+	        stmt.setString(2, password);
+	        stmt.setString(3, firstName);
+	        stmt.setString(4, lastName);
+	        stmt.setDate(5, dateOfBirth);
+	        stmt.setString(6, address);
+	        stmt.setString(7, secretPhrase);
+	        stmt.setBoolean(8, isAdmin);
+	        stmt.setDouble(9, money);
+	        stmt.setInt(10, userId);
+
+	        int affectedRows = stmt.executeUpdate();
+
+	        if (affectedRows > 0) {
+	            System.out.println("User with ID " + userId + " has been updated.");
+	        } else {
+	            System.out.println("No user with ID " + userId + " found.");
+	        }
+
+	    } catch (SQLException e) {
+	        System.err.println("Error updating user: " + e.getMessage());
+	    }
+	}
 
 	public String getEmail() {
 		return email;

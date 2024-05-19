@@ -8,19 +8,21 @@ import java.util.ArrayList;
 
 public class ShippingCart {
 	
-	static double totalPrice;
-	
-	public static void Pay(User user) {
+	public static void Pay(User user, double totalPrice) {
 	    try (Connection conn = DatabaseConnection.getConnection();
-	         PreparedStatement statement = conn.prepareStatement("UPDATE users SET money = money - ? WHERE id = ?")) {
+	         PreparedStatement statement = conn.prepareStatement("UPDATE users SET money = money - ? WHERE users.id = ?")) {
 	        statement.setDouble(1, totalPrice);
-	    	statement.setInt(2, user.getId());
-	        statement.executeQuery();
+	        statement.setInt(2, user.getId());
+	        int rowsAffected = statement.executeUpdate();
+	        if (rowsAffected > 0) {
+	            System.out.println("Payment successful. " + user.getFirstName());
+	        } else {
+	            System.out.println("No rows updated. Please check the user ID.");
+	        }
 	    } catch (SQLException e) {
-	        System.out.println("Erreur lors de l'affichage du panier : " + e.getMessage());
+	        System.out.println("Erreur lors de la mise à jour du solde : " + e.getMessage());
 	    }
 	}
-	
 	
 	public static int verifyShippingCart(User user) {
 		int nbFilms = -1;
@@ -28,17 +30,19 @@ public class ShippingCart {
 				PreparedStatement statement = conn.prepareStatement("SELECT COUNT(*) FROM shippingcart JOIN historique_achat ON shippingcart.film_id = historique_achat.id_film  WHERE shippingcart.user_id = ?")) {
 			statement.setInt(1, user.getId());
 			ResultSet resultSet = statement.executeQuery();
+			
 			while (resultSet.next()) {
 				nbFilms = resultSet.getInt("COUNT(*)");
 			}
 		} catch (SQLException e) {
-			System.out.println("Error modifying film in shipping cart: " + e.getMessage());
+			System.out.println("your shipping cart is empty");
 		}
 		return nbFilms;
 	}
 	
 	
-	public static void viewShippingCart(User user) {
+	public static double viewShippingCart(User user) {
+		double totalPrice = 0.0;
 	    try (Connection conn = DatabaseConnection.getConnection();
 	         PreparedStatement statement = conn.prepareStatement("SELECT * FROM shippingcart sc LEFT JOIN films f ON sc.film_id = f.id WHERE sc.user_id = ?")) {
 	        statement.setInt(1, user.getId());
@@ -57,21 +61,22 @@ public class ShippingCart {
 	    } catch (SQLException e) {
 	        System.out.println("Erreur lors de l'affichage du panier : " + e.getMessage());
 	    }
+	    return totalPrice;
 	}
 	
 	public static ArrayList<Integer> idsFromShippingCart(User user) {
 		ArrayList<Integer> ids = new ArrayList<Integer>();
 	    try (Connection conn = DatabaseConnection.getConnection();
-	         PreparedStatement statement = conn.prepareStatement("SELECT id FROM shippingcart sc LEFT JOIN films f ON sc.film_id = f.id WHERE sc.user_id = ?")) {
+	         PreparedStatement statement = conn.prepareStatement("SELECT film_id FROM shippingcart sc LEFT JOIN films f ON sc.film_id = f.id WHERE sc.user_id = ?")) {
 	        statement.setInt(1, user.getId());
 	        try (ResultSet resultSet = statement.executeQuery()) {
 	            while (resultSet.next()) {
-	            	int id = resultSet.getInt("id");
+	            	int id = resultSet.getInt("film_id");
 	            	ids.add(id);
 	            }
 	        }
 	    } catch (SQLException e) {
-	        System.out.println("Erreur lors de l'affichage du panier : " + e.getMessage());
+	        System.out.println("Erreur lors de l'affichage des ids : " + e.getMessage());
 	    }
 		return ids;
 	}
@@ -101,11 +106,11 @@ public class ShippingCart {
 		}
 	}
 
-	public static void modifyShippingCart(User user, int film_index) {
+	public static void modifyShippingCart(User user, int film_index, int new_film_index) {
 		try (Connection conn = DatabaseConnection.getConnection();
 				PreparedStatement statement = conn.prepareStatement("UPDATE shippingcart SET user_id = ? AND film_id = ? WHERE user_id = ? AND film_id = ?")) {
 			statement.setInt(1, user.getId());
-			statement.setInt(2, film_index);
+			statement.setInt(2, new_film_index);
 			statement.setInt(3, user.getId());
 			statement.setInt(4, film_index);
 			statement.executeUpdate();
