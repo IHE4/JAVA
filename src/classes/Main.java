@@ -114,12 +114,13 @@ public class Main {
 			while (user != null) {
 				Scanner navScanner = new Scanner(System.in);
 				System.out.println("Navigation Menu:");
-				System.out.println("1. View Movies");
-				System.out.println("2. View Shipping Cart");
-				System.out.println("3. Disconnect");
-				System.out.println("4. Quit");
+				System.out.println("1. Top Movies");
+				System.out.println("2. View Movies");
+				System.out.println("3. View Shipping Cart");
+				System.out.println("4. Disconnect");
+				System.out.println("5. Quit");
 				if (user.getIsAdmin()) {
-					System.out.println("5. Admin Panel");
+					System.out.println("6. Admin Panel");
 				}
 				System.out.println("User connected: " + user.getFirstName() + " " + user.getLastName() + " (admin: " + user.getIsAdmin() + ")");
 				System.out.print("Enter your choice: ");
@@ -127,6 +128,9 @@ public class Main {
 
 				switch (choice) {
 				case 1:
+					Movie.getTopMovies();
+					break;
+				case 2:
 					Movie.listMovies();
 					System.out.println("Film Menu:");
 					System.out.println("1. Add to Shipping Cart");
@@ -196,7 +200,7 @@ public class Main {
 					}
 					break;
 
-				case 2:
+				case 3:
 					double totalPrice = ShippingCart.viewShippingCart(user);
 					System.out.println("Shipping Cart Menu:");
 					System.out.println("1. Pay");
@@ -238,17 +242,17 @@ public class Main {
 					}
 					break;
 
-				case 3:
+				case 4:
 					user = null;
 					break;
 
-				case 4:
+				case 5:
 					System.out.println("Goodbye!");
 					navScanner.close();
 					System.exit(0);
 					break;
 
-				case 5:
+				case 6:
 					// handle admin panel
 					if (user.getIsAdmin()) {
 						Scanner AdminScanner = new Scanner(System.in);
@@ -269,7 +273,7 @@ public class Main {
 						System.out.println("13. Add To Shopping History");
 						System.out.println("14. Remove To Shopping History");
 						System.out.println("15. Modify Shopping History");
-						System.out.println("17. AI 1");
+						System.out.println("17. Sentiment Analysis AI");
 						System.out.println("18. AI 2");
 						System.out.println("19. Exit");
 
@@ -444,6 +448,16 @@ public class Main {
 							break;
 						case 17:
 							// Code pour l'IA 1
+							//lister tout les commentaires
+							Admin.viewComments();
+							
+							//ia
+							Scanner sentimentAnalysisScanner = new Scanner(System.in);
+							System.out.println("select id of a comment :\n");
+							int id = sentimentAnalysisScanner.nextInt();
+							String text = Admin.getCommentFromID(id);
+							SentimentAnalysisClient.sentimentAnalysis(text);
+							
 							break;
 						case 18:
 							// Code pour l'IA 2

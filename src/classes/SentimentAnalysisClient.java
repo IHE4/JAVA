@@ -8,9 +8,9 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 public class SentimentAnalysisClient {
-    public static void main(String[] args) {
+    public static void sentimentAnalysis(String text) {
         try {
-            String text = "I loved this film";
+            //String text = "I loved this film";
             String jsonInputString = "{\"text\": \"" + text + "\"}";
 
             URL url = new URL("http://localhost:5000/predict");

@@ -7,6 +7,29 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class Movie {
+		
+	public static void getTopMovies() {
+		int id = -1;
+		try (Connection conn = DatabaseConnection.getConnection();
+				PreparedStatement pstmt = conn.prepareStatement("SELECT f.id, f.title, AVG(c.note) as moyenne_note FROM films f JOIN commentaires c ON f.id = c.id_film GROUP BY f.title ORDER BY moyenne_note DESC LIMIT 3;")) {
+			ResultSet resultSet = pstmt.executeQuery();      
+            if (!resultSet.isBeforeFirst()) {
+                System.out.println("No movies found");
+                return;
+            }
+            while (resultSet.next()) {
+            	id = resultSet.getInt("id");
+                String titre = resultSet.getString("title");
+                
+
+                System.out.print("Title: " + titre);
+                System.out.println(" " + Movie.getMeanNote(id) + "/10");
+                System.out.println();  
+            }
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 
 	public static int getIndexMovieByTitle(String title) {
 		int id = -1;
